@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>JS Drum Kit</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="./style.css">
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
+
 <body>
-
-
   <div class="keys">
     <div data-key="65" class="key">
       <kbd>A</kbd>
@@ -58,10 +58,28 @@
   <audio data-key="75" src="sounds/tom.wav"></audio>
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<script>
+  <script>
+    function playSound(e) {
+      const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+      const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
 
-</script>
+      if (!audio) return; // those keys have no audio settings
+      audio.currentTime = 0; // when user keydown, then rewind to the beginning for constantly play
+      audio.play();
+      key.classList.add("playing");
+    }
 
+    function removeTransition(e) {
+      if (e.propertyName !== 'transform') return;
+      this.classList.remove("playing");
+    }
+
+    const keys = document.querySelectorAll(".key");
+    keys.forEach(key => key.addEventListener("transitionend", removeTransition));
+
+    window.addEventListener("keydown", playSound);
+  </script>
 
 </body>
+
 </html>

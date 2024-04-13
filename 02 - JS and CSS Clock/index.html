@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JS + CSS Clock</title>
   <link rel="icon" href="https://fav.farm/🔥" />
 </head>
+
 <body>
-
-
-    <div class="clock">
-      <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
-      </div>
+  <div class="clock">
+    <div class="clock-face">
+      <div class="hand hour-hand"></div>
+      <div class="hand minute-hand"></div>
+      <div class="hand second-hand"></div>
+      <div class="center"></div>
     </div>
+  </div>
 
 
   <style>
     html {
-      background: #018DED url(https://unsplash.it/1500/1000?image=881&blur=5);
+      background: lightseagreen;
       background-size: cover;
       font-family: 'helvetica neue';
       text-align: center;
@@ -44,32 +46,95 @@
       position: relative;
       padding: 2rem;
       box-shadow:
-        0 0 0 4px rgba(0,0,0,0.1),
+        0 0 0 4px rgba(0, 0, 0, 0.1),
         inset 0 0 0 3px #EFEFEF,
         inset 0 0 10px black,
-        0 0 10px rgba(0,0,0,0.2);
+        0 0 10px rgba(0, 0, 0, 0.2);
     }
 
     .clock-face {
       position: relative;
       width: 100%;
       height: 100%;
-      transform: translateY(-3px); /* account for the height of the clock hands */
     }
 
     .hand {
+      position: absolute;
+      top: 50%;
       width: 50%;
       height: 6px;
       background: black;
-      position: absolute;
-      top: 50%;
+      transform-origin: 100%;
+      /* set pivot point one the right side*/
+      transform: rotate(90deg);
+      /* start at 12:00 */
+      /* transition: all 0.05s; */
+      /* comment out transition, then hands rotate from 444° to 90° ,itself WON'T backwards ...*/
+      transition-timing-function: cubic-bezier(0.1, 1.8, 0.5, 1);
+      /* make the clock tick-tack */
     }
 
+    .hour-hand {
+      width: 35%;
+      margin-left: 15%;
+      height: 9px;
+    }
+
+    .minute-hand {
+      width: 45%;
+      margin-left: 5%;
+    }
+
+    .second-hand {
+      background: lightsalmon;
+      height: 3px;
+    }
+
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: gray;
+    }
   </style>
 
   <script>
+    const secondHand = document.querySelector(".second-hand");
+    const minuteHand = document.querySelector(".minute-hand");
+    const hourHand = document.querySelector(".hour-hand");
 
+    function setDate() {
+      const now = new Date();
+      const seconds = now.getSeconds();
+      const minutes = now.getMinutes();
+      const hours = now.getHours();
 
+      // make up for the initial offset of 90 degrees
+      const secondsDegrees = ((seconds / 60) * 360) + 90;
+      const minutesDegrees = ((minutes / 60) * 360) + 90;
+      const hoursDegrees = ((hours / 12) * 360) + 90;
+
+      secondHand.style.transform = returnOrigin(secondsDegrees);
+      minuteHand.style.transform = returnOrigin(minutesDegrees);
+      hourHand.style.transform = returnOrigin(hoursDegrees);
+    }
+
+    // didn't resolve the problem when hands rotate from 444° to 90° ,itself will backwards
+    function returnOrigin(deg) {
+      if (deg === 90) {
+        document.querySelector(".hand").style.transition = "none";
+      } else {
+        document.querySelector(".hand").style.transition = "all 0.05s";
+      }
+      return `rotate(${deg}deg)`;
+    }
+
+    setInterval(setDate, 1000); // repeatedly calls a function
   </script>
 </body>
+
 </html>
